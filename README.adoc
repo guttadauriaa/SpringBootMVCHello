@@ -1,0 +1,16 @@
+== SpringBootMVCHello
+
+Simple example of Spring-boot with Spring MVC from https://spring.io/guides/gs/spring-boot/.
+
+=== How to build and run the example
+
+*Requirements :* JDK 8 and Maven installed.
+
+[source,bash]
+----
+cd SpringBootMVCHello
+mvn package && java -jar target/gs-spring-boot-0.1.0.jar
+----
+
+Go to http://localhost:8080 with your web browser.
+
