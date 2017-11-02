@@ -14,3 +14,36 @@ mvn package && java -jar target/gs-spring-boot-0.1.0.jar
 
 Go to http://localhost:8080 with your web browser.
 
+=== How to run it in a container with Docker
+
+First, build the example with __**mvn package**__ :
+
+[source,bash]
+----
+cd SpringBootMVCHello
+mvn package
+----
+
+Then, build the docker image and give it a name, "spring-boot-mvc-hello" in this example :
+
+[source,bash]
+----
+docker build -t spring-boot-mvc-hello .
+----
+
+Finally, run it on the port 8080 and give it a name :
+
+[source,bash]
+----
+docker run --rm -p 8080:8080 --name mvc-hello -t spring-boot-mvc-hello
+----
+
+To run the container in the background, add the **-d** option :
+
+[source,bash]
+----
+docker run --rm -p 8080:8080 --name mvc-hello -dt spring-boot-mvc-hello
+docker logs -f mvc-hello
+----
+
+You can customize the docker image by modifying the Dockerfile.
