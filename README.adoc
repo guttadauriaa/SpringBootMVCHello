@@ -1,49 +1,74 @@
 == SpringBootMVCHello
 
-Simple example of Spring-boot with Spring MVC from https://spring.io/guides/gs/spring-boot/.
+Simple example of Spring-boot with Spring MVC based on the following guides :
 
-=== How to build and run the example
+* https://spring.io/guides/gs/spring-boot/
+* https://spring.io/guides/gs/accessing-data-jpa/
+* https://spring.io/guides/gs/accessing-data-mysql/
 
-*Requirements :* JDK 8 and Maven installed.
+=== How to run it
 
-[source,bash]
-----
-cd SpringBootMVCHello
-mvn package && java -jar target/gs-spring-boot-0.1.0.jar
-----
+*Requirements :* Docker and docker-compose installed.
 
-Go to http://localhost:8080 with your web browser.
-
-=== How to run it in a container with Docker
-
-First, build the example with __**mvn package**__ :
+After cloning the project :
 
 [source,bash]
 ----
-cd SpringBootMVCHello
-mvn package
+$ cd SpringBootMVCHello
+$ docker-compose up -d
+$ docker-inspect springbootmvchello_app_1 | grep Address
+            "LinkLocalIPv6Address": "",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "GlobalIPv6Address": "",
+            "IPAddress": "",
+            "MacAddress": "",
+                    "IPAddress": "172.22.0.3",
+                    "GlobalIPv6Address": "",
+                    "MacAddress": "02:42:ac:16:00:03",
 ----
 
-Then, build the docker image and give it a name, "spring-boot-mvc-hello" in this example :
+Look for the line matching IPAddress, in this example :
+
+    "IPAddress": "172.22.0.3"
+
+In your web browser, go to http://172.22.0.3:8080
+
+If it works, you can go to http://172.22.0.3:8080/customers to verify that the application is connecting to the MariaDB database container.
+
+When using it for real, don't forget to modify the default database user and password in :
+
+* db/mysql.sql for the MariaDB container
+* src/main/resources/application.properties for the application container.
+
+You can watch the logs with the following command :
 
 [source,bash]
 ----
-docker build -t spring-boot-mvc-hello .
+$ docker-compose logs -f
 ----
 
-Finally, run it on the port 8080 and give it a name :
-
-[source,bash]
-----
-docker run --rm -p 8080:8080 --name mvc-hello -t spring-boot-mvc-hello
-----
-
-To run the container in the background, add the **-d** option :
+After the first launch, you can stop the containers like that :
 
 [source,bash]
 ----
-docker run --rm -p 8080:8080 --name mvc-hello -dt spring-boot-mvc-hello
-docker logs -f mvc-hello
+$ docker-compose stop
 ----
 
-You can customize the docker image by modifying the Dockerfile.
+The next start is done with :
+
+[source,bash]
+----
+$ docker-compose start
+----
+
+=== To stop and destroy the containers
+
+[source,bash]
+----
+$ docker-compose down
+----
+
+This last command will erase all content and databases from your hard drive.
+
+

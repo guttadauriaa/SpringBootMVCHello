@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+    mariadb:
+        image: 'library/mariadb:10.3'
+        ports:
+            - '3306:3306'
+        environment:
+            # Removed for security reasons because the password appears in
+            # the docker inspect output.
+            # Added inside ./db/mydb.sql as a SQL query.
+            #- MYSQL_USER=user
+            #- MYSQL_PASSWORD=35jC43x3u/7pyiVf8m0CgJQv0U8RnkdaJA==
+            - MYSQL_DATABASE=db_example
+            #- MYSQL_ROOT_PASSWORD=
+            - MYSQL_RANDOM_ROOT_PASSWORD=yes
+            - TZ=Europe/Brussels
+        volumes:
+            # - ./db:/db
+            - ./db/mydb.sql:/docker-entrypoint-initdb.d/mydb.sql
+            - ./conf/utf8mb4.cnf:/etc/mysql/conf.d/utf8mb4.cnf
+
+    app:
+        build: .
+        hostname: java
+        user: root
+        deploy:
+            resources:
+                limits:
+                    memory: 1G
+                reservations:
+                    cpus: '1.0'
+                    memory: 1G
+        environment:
+            - shm_size = 1G
+            - JAVA_OPTS = "-Xmx${shm_size} -XX:+UseConcMarkSweepGC -XX:NativeMemoryTracking=summary"
+        volumes:
+            #- ./src:/code
+            - ./mariadb-java-client-2.0.1.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/mariadb-java-client-2.0.1.jar
+            - ./entrypoint.sh:/entrypoint.sh
+
+        links:
+            - mariadb
+        entrypoint:
+            - /entrypoint.sh
+
